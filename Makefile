@@ -1,19 +1,19 @@
-.PHONY: all install uninstall permissions check health-check help
+.PHONY: all install uninstall permissions check health-check rehash help
 
 SHELL := /usr/bin/env bash
-INSTALL_DIR := $(HOME)/.local/share/goto
-BLOCK_MARKER := # >>> goto-cli initialize >>>
 
 all: help
 
-# Надання прав на виконання для всіх .sh скриптів
+# Надання прав на виконання
 permissions:
 	@echo "Надання прав на виконання для скриптів..."
-	@chmod +x install.sh uninstall.sh goto.sh 2>/dev/null || chmod +x *.sh
+	@chmod +x install.sh uninstall.sh goto.sh check.sh 2>/dev/null || chmod +x *.sh
 
-# Встановлення
+# Встановлення з автоматичним викликом rehash
 install: permissions
 	@./install.sh
+	@echo ""
+	@$(MAKE) --no-print-directory rehash
 
 # Видалення
 uninstall:
@@ -25,49 +25,27 @@ uninstall:
 		exit 1; \
 	fi
 
-# Аліас для health-check
-health-check: check
+# Скидання хешу та інструкція щодо оновлення термінала
+rehash:
+	@echo "Оновлення таблиць shell..."
+	@hash -r 2>/dev/null || true
+	@if [ -n "$$ZSH_VERSION" ]; then rehash 2>/dev/null || true; fi
+	@echo "--------------------------------------------------------"
+	@echo "Примітка: Дочірній процес make не може змінити середовище вашої поточної сесії."
+	@echo "Щоб функція 'goto' запрацювала прямо зараз, виконайте:"
+	@echo "  source ~/.bashrc   # для Bash"
+	@echo "  source ~/.zshrc    # для Zsh"
+	@echo "  або простіше: exec $$SHELL"
+	@echo "--------------------------------------------------------"
 
-# Перевірка стану інсталяції
-check:
-	@echo "=== Health Check goto-cli ==="
-	@ERR=0; \
-	if [ -d "$(INSTALL_DIR)" ] && [ -f "$(INSTALL_DIR)/goto.sh" ]; then \
-		echo "[OK] Файли інструменту присутні в $(INSTALL_DIR)"; \
-	else \
-		echo "[FAIL] goto-cli не знайдено в $(INSTALL_DIR)"; \
-		ERR=1; \
-	fi; \
-	FOUND_RC=0; \
-	for rc in "$(HOME)/.bashrc" "$(HOME)/.zshrc"; do \
-		if [ -f "$$rc" ] && grep -q "$(BLOCK_MARKER)" "$$rc"; then \
-			echo "[OK] Конфігураційний блок присутній у $$rc"; \
-			FOUND_RC=1; \
-		fi; \
-	done; \
-	if [ $$FOUND_RC -eq 0 ]; then \
-		echo "[FAIL] Блок ініціалізації відсутній у .bashrc та .zshrc"; \
-		ERR=1; \
-	fi; \
-	if [ -f "$(INSTALL_DIR)/goto.sh" ]; then \
-		if bash -c "source $(INSTALL_DIR)/goto.sh && declare -f goto >/dev/null"; then \
-			echo "[OK] Скрипт goto.sh синтаксично коректний і імпортується"; \
-		else \
-			echo "[FAIL] Помилка завантаження goto.sh"; \
-			ERR=1; \
-		fi; \
-	fi; \
-	echo "-----------------------------"; \
-	if [ $$ERR -eq 0 ]; then \
-		echo "Статус: Все працює коректно!"; \
-	else \
-		echo "Статус: Виявлено проблеми з інсталяцією."; \
-		exit 1; \
-	fi
+# Виклик окремого check.sh
+check health-check: permissions
+	@./check.sh
 
 help:
 	@echo "Доступні команди:"
-	@echo "  make install       - Надати права та встановити goto-cli"
-	@echo "  make uninstall     - Видалити goto-cli та очистити RC-файли"
-	@echo "  make permissions   - Зробити .sh скрипти виконуваними"
-	@echo "  make health-check  - Перевірити коректність встановлення"
+	@echo "  make install       - Встановити goto-cli та показати команди оновлення"
+	@echo "  make rehash        - Скинути хеш та вивести інструкцію для оновлення shell"
+	@echo "  make health-check  - Запустити check.sh для діагностики"
+	@echo "  make uninstall     - Видалити goto-cli"
+	@echo "  make permissions   - Надати +x права всім .sh скриптам"
