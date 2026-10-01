@@ -13,6 +13,32 @@ _goto_add() {
     # Гарантуємо існування директорії
     mkdir -p "$(dirname "$projects_file")" 2>/dev/null || true
 
+    local overwrite=true
+
+    # Перевірка наявності існуючого проєкту
+    if [ -f "$projects_file" ]; then
+        local existing_entry
+        existing_entry=$(grep "^${name}|" "$projects_file" 2>/dev/null | head -n 1)
+
+        if [ -n "$existing_entry" ]; then
+            local old_path="${existing_entry#*|}"
+            
+            # Запитуємо користувача через /dev/tty
+            printf "Проєкт '%s' вже існує (%s).\nПерезаписати шлях? [Y/n]: " "$name" "$old_path"
+            local reply
+            read -r reply </dev/tty 2>/dev/null || read -r reply
+
+            case "$reply" in
+                [nN]*)
+                    overwrite=false
+                    ;;
+                *)
+                    overwrite=true
+                    ;;
+            esac
+        fi
+    fi
+
     # Безпечне створення тимчасового файлу
     local tmp_file
     if command -v mktemp >/dev/null 2>&1; then
@@ -22,10 +48,13 @@ _goto_add() {
         tmp_file="${projects_file}.tmp.$$.$RANDOM"
     fi
 
-    # Фільтрація та додавання нового запису
+    # Формування нового вмісту
     if [ -f "$projects_file" ]; then
-        grep -v "^${name}|" "$projects_file" > "$tmp_file" 2>/dev/null || true
-        # mv "$tmp_file" "$projects_file"
+        if [ "$overwrite" = true ]; then
+            grep -v "^${name}|" "$projects_file" > "$tmp_file" 2>/dev/null || true
+        else
+            cat "$projects_file" > "$tmp_file" 2>/dev/null || true
+        fi
     else
         : > "$tmp_file"
     fi
@@ -34,7 +63,12 @@ _goto_add() {
 
     # Атомарна заміна файлу
     if mv "$tmp_file" "$projects_file"; then
-        log_success "Проєкт '$name' збережено: $target_path"
+        if [ "$overwrite" = true ]; then
+            log_success "Проєкт '$name' оновлено: $target_path"
+        elif [ "$overwrite" = false ]; then
+            log_success "Додано дублікат проєкту '$name': $target_path"
+        else
+            log_success "Проєкт '$name' збережено: $target_path"
     else
         rm -f "$tmp_file"
         log_error "Не вдалося зберегти зміни у $projects_file"
