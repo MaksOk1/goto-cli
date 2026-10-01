@@ -63,12 +63,7 @@ _goto_add() {
 
     # Атомарна заміна файлу
     if mv "$tmp_file" "$projects_file"; then
-        if [ "$overwrite" = true ]; then
-            log_success "Проєкт '$name' оновлено: $target_path"
-        elif [ "$overwrite" = false ]; then
-            log_success "Додано дублікат проєкту '$name': $target_path"
-        else
-            log_success "Проєкт '$name' збережено: $target_path"
+        log_success "Проєкт '$name' збережено: $target_path"
     else
         rm -f "$tmp_file"
         log_error "Не вдалося зберегти зміни у $projects_file"
