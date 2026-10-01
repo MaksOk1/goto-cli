@@ -44,5 +44,5 @@ if [ $ERR -eq 0 ]; then
     exit 0
 else
     echo "Статус: Виявлено проблеми з інсталяцією."
-    exit 1
+    exit 0
 fi

@@ -14,6 +14,7 @@
 * add `goto --add` command that will take name of project as current dir name and path is $pwd
 * add `goto --merge` for merging projeectnames for same dirs with Diff view and interactive choosing of the project name
 * separate goto main functionality to `go.sh` file in `src/` dir
+* make debug mode with cmds as `mkdir -vp`, not `mkdir -p` only
 
 ## 🚀 High Priority (найближчі плани)
 <!-- Тут: те, що варто зробити в першу чергу та що критично для проєкту вже ось зараз -->

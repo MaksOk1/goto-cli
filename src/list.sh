@@ -9,9 +9,9 @@ _goto_list() {
     fi
 
     echo "Доступні проєкти:"
-    if command -v column >/dev/null 2>&1; then
-        column -t -s '|' "$projects_file" | sed 's/^/  /'
-    else
-        sed 's/|/  ->  /' "$projects_file" | sed 's/^/  /'
-    fi
+    local p_name p_dir
+    while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
+        [ -z "$p_name" ] && continue
+        printf "  %-20s -> %s\n" "$p_name" "$p_dir"
+    done < "$projects_file"
 }

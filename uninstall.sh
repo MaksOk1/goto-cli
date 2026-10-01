@@ -7,12 +7,25 @@ BLOCK_END="# <<< goto-cli initialize <<<"
 remove_rc() {
     local rc_file="$1"
     if [ -f "$rc_file" ]; then
-        # Кросплатформенне видалення блоку між маркерами
-        if command -v perl >/dev/null 2>&1; then
-            perl -i -ne "print unless /$BLOCK_MARKER/../$BLOCK_END/" "$rc_file"
-        else
-            sed -i.bak "/$BLOCK_MARKER/,/$BLOCK_END/d" "$rc_file" && rm -f "${rc_file}.bak"
-        fi
+        local tmp_rc="${rc_file}.tmp.$$"
+        local inside_block=0
+        > "$tmp_rc"
+
+        while IFS= read -r line || [ -n "$line" ]; do
+            if [ "$line" = "$BLOCK_MARKER" ]; then
+                inside_block=1
+                continue
+            fi
+            if [ "$line" = "$BLOCK_END" ]; then
+                inside_block=0
+                continue
+            fi
+            if [ $inside_block -eq 0 ]; then
+                echo "$line" >> "$tmp_rc"
+            fi
+        done < "$rc_file"
+
+        mv "$tmp_rc" "$rc_file"
         echo "Очищено $rc_file"
     fi
 }
@@ -25,4 +38,5 @@ if [ -d "$INSTALL_DIR" ]; then
     echo "Видалено $INSTALL_DIR"
 fi
 
+echo ""
 echo "goto-cli успішно видалено."

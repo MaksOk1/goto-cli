@@ -45,8 +45,17 @@ goto() {
             _goto_rm "$projects_file" "$2"
             ;;
         *)
-            local target_dir
-            target_dir=$(awk -F'|' -v p="$1" '$1 == p {print $2}' "$projects_file")
+            local target_dir=""
+            local p_name p_dir
+
+            if [ -f "$projects_file" ]; then
+                while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
+                    if [ "$p_name" = "$1" ]; then
+                        target_dir="$p_dir"
+                        break
+                    fi
+                done < "$projects_file"
+            fi
 
             if [ -n "$target_dir" ] && [ -d "$target_dir" ]; then
                 cd "$target_dir" || return 1
@@ -66,10 +75,14 @@ _goto_complete() {
 
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local list
-    list=$(awk -F'|' '{print $1}' "$projects_file")
+    local p_name p_dir
+
+    while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
+        [ -n "$p_name" ] && list="$list $p_name"
+    done < "$projects_file"
 
     if [ -n "$ZSH_VERSION" ]; then
-        reply=($(echo "$list"))
+        reply=(${=list})
     else
         COMPREPLY=($(compgen -W "$list" -- "$cur"))
     fi
@@ -80,4 +93,3 @@ if [ -n "$BASH_VERSION" ]; then
 elif [ -n "$ZSH_VERSION" ]; then
     compctl -K _goto_complete goto
 fi
-# EOF
