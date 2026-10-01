@@ -9,6 +9,10 @@ echo "Установка goto-cli..."
 mkdir -p "$INSTALL_DIR"
 cp "$SCRIPT_NAME" "$INSTALL_DIR/$SCRIPT_NAME"
 
+if [ -d "lib" ]; then
+    cp -r "lib" "$INSTALL_DIR/"
+fi
+
 if [ -d "src" ]; then
     cp -r "src" "$INSTALL_DIR/"
 fi

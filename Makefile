@@ -7,7 +7,7 @@ all: help
 # Надання прав на виконання
 permissions:
 	@echo "Надання прав на виконання..."
-	@chmod +x *.sh src/*.sh 2>/dev/null || chmod +x *.sh
+	@chmod +x *.sh src/*.sh lib/*.sh 2>/dev/null || chmod +x *.sh
 
 # Встановлення з автоматичним викликом rehash
 install: permissions

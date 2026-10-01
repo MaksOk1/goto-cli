@@ -5,7 +5,7 @@ _goto_rm() {
     local name="$2"
 
     if [ -z "$name" ]; then
-        echo "Помилка: Вкажіть назву проєкту для видалення."
+        log_error "Помилка: Вкажіть назву проєкту для видалення."
         return 1
     fi
 
@@ -15,5 +15,5 @@ _goto_rm() {
         mv "$tmp_file" "$projects_file"
     fi
 
-    echo "Проєкт '$name' видалено."
+    log_success "Проєкт '$name' видалено."
 }

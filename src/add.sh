@@ -12,5 +12,5 @@ _goto_add() {
     fi
 
     echo "${name}|${target_path}" >> "$projects_file"
-    echo "Проєкт '$name' збережено: $target_path"
+    log_success "Проєкт '$name' збережено: $target_path"
 }

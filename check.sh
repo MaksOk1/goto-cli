@@ -7,10 +7,10 @@ echo "=== Health Check goto-cli ==="
 ERR=0
 
 # 1. Перевірка наявності файлів й папки src/
-if [ -d "$INSTALL_DIR" ] && [ -f "$INSTALL_DIR/goto.sh" ] && [ -d "$INSTALL_DIR/src" ]; then
-    echo "[OK] Основні файли та папка src/ присутні у $INSTALL_DIR"
+if [ -d "$INSTALL_DIR" ] && [ -f "$INSTALL_DIR/goto.sh" ] && [ -d "$INSTALL_DIR/src" ] && [ -d "$INSTALL_DIR/lib" ]; then
+    echo "[OK] Основні файли, папки lib/ та src/ присутні у $INSTALL_DIR"
 else
-    echo "[FAIL] goto-cli відсутні у $INSTALL_DIR"
+    echo "[FAIL] goto-cli або необхідні директорії відсутні у $INSTALL_DIR"
     ERR=1
 fi
 
@@ -44,5 +44,5 @@ if [ $ERR -eq 0 ]; then
     exit 0
 else
     echo "Статус: Виявлено проблеми з інсталяцією."
-    exit 0
+    exit 1
 fi

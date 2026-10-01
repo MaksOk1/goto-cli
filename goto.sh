@@ -18,6 +18,14 @@ _goto_find_dir() {
 
 _GOTO_DIR="$(_goto_find_dir)"
 
+# Підключення системних бібліотек із lib/
+if [ -d "$_GOTO_DIR/lib" ]; then
+    for _lib in "$_GOTO_DIR/lib"/*.sh; do
+        [ -f "$_lib" ] && . "$_lib"
+    done
+    unset _lib
+fi
+
 # Імпорт усіх модулів із src/
 if [ -d "$_GOTO_DIR/src" ]; then
     for _mod in "$_GOTO_DIR/src"/*.sh; do
@@ -45,27 +53,9 @@ goto() {
             _goto_rm "$projects_file" "$2"
             ;;
         *)
-            local target_dir=""
-            local p_name p_dir
-
-            if [ -f "$projects_file" ]; then
-                while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
-                    if [ "$p_name" = "$1" ]; then
-                        target_dir="$p_dir"
-                        break
-                    fi
-                done < "$projects_file"
-            fi
-
-            if [ -n "$target_dir" ] && [ -d "$target_dir" ]; then
-                cd "$target_dir" || return 1
-            else
-                echo "Помилка: Проєкт '$1' не знайдено або папка '$target_dir' не існує."
-                return 1
-            fi
+            _goto_go "$projects_file" "$1"
             ;;
     esac
-    # return 0
 }
 
 # Автодоповнення назв проєктів (Bash/Zsh)
