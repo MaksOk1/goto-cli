@@ -58,48 +58,46 @@ help:
 	@echo "  make permissions	- Надати +x права всім .sh скриптам"
 
 
-BINARY=goto
+BINARY=goto-bin
 BUILD_DIR=dist
 
 build:
 	@echo "[+] Створення папки для збірки..."
 	mkdir -p $(BUILD_DIR)
 
-	@echo "[+] Об'єднання всіх скриптів в один файл..."
-	cp goto.sh $(BUILD_DIR)/monolith.sh
+	@echo "[+] Збирання монолітного коду..."
+	# Створюємо чистий файл з правильним shebang
+	echo "#!/bin/bash" > $(BUILD_DIR)/monolith.sh
 	
-	# Зміна shebang з env на чистий /bin/bash для сумісності з shc
-	sed -i '1s|#!/usr/bin/env bash|#!/bin/bash|' $(BUILD_DIR)/monolith.sh
-	
-	# Тобі вже знайомі заміни source:
-	sed -i '/source.*lib\/log.sh/r lib/log.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*lib\/log.sh/d' $(BUILD_DIR)/monolith.sh
-	
-	sed -i '/source.*src\/add.sh/r src/add.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*src\/add.sh/d' $(BUILD_DIR)/monolith.sh
-	
-	sed -i '/source.*src\/go.sh/r src/go.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*src\/go.sh/d' $(BUILD_DIR)/monolith.sh
-	
-	sed -i '/source.*src\/help.sh/r src/help.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*src\/help.sh/d' $(BUILD_DIR)/monolith.sh
-	
-	sed -i '/source.*src\/list.sh/r src/list.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*src\/list.sh/d' $(BUILD_DIR)/monolith.sh
-	
-	sed -i '/source.*src\/merge.sh/r src/merge.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*src\/merge.sh/d' $(BUILD_DIR)/monolith.sh
-	
-	sed -i '/source.*src\/rm.sh/r src/rm.sh' $(BUILD_DIR)/monolith.sh
-	sed -i '/source.*src\/rm.sh/d' $(BUILD_DIR)/monolith.sh
+	# 1. Вшиваємо всі системні бібліотеки з lib/
+	@for file in lib/*.sh; do \
+		echo "# --- Вміст $$file ---" >> $(BUILD_DIR)/monolith.sh; \
+		cat $$file >> $(BUILD_DIR)/monolith.sh; \
+		echo "" >> $(BUILD_DIR)/monolith.sh; \
+	done
 
-	@echo "[+] Обфускація та компіляція в бінарник..."
+	# 2. Вшиваємо всі модулі з src/
+	@for file in src/*.sh; do \
+		echo "# --- Вміст $$file ---" >> $(BUILD_DIR)/monolith.sh; \
+		cat $$file >> $(BUILD_DIR)/monolith.sh; \
+		echo "" >> $(BUILD_DIR)/monolith.sh; \
+	done
+
+	# 3. Додаємо основну логіку з вашого goto.sh (але модифіковану під бінарник)
+	@echo "# --- Основна логіка ---" >> $(BUILD_DIR)/monolith.sh
+	# Вирізаємо з вашого goto.sh секції динамічного імпорту, залишаючи логіку 'goto()' та автодоповнення
+	sed -n '/goto()/,$$p' goto.sh >> $(BUILD_DIR)/monolith.sh
+
+	# 4. Змушуємо бінарник викликати функцію goto з передачею всіх аргументів терміналу
+	echo "" >> $(BUILD_DIR)/monolith.sh
+	echo 'goto "$$@"' >> $(BUILD_DIR)/monolith.sh
+
+	@echo "[+] Компіляція та обфускація через shc..."
 	shc -r -f $(BUILD_DIR)/monolith.sh -o $(BUILD_DIR)/$(BINARY)
 
-	@echo "[+] Очищення тимчасового коду..."
+	@echo "[+] Очищення тимчасових файлів..."
 	rm -f $(BUILD_DIR)/monolith.sh $(BUILD_DIR)/monolith.sh.x.c
-	@echo "[OK] Готово! Бінарник тут: $(BUILD_DIR)/$(BINARY)"
-
+	@echo "[OK] Бінарник успішно створено: $(BUILD_DIR)/$(BINARY)"
 
 clean:
 	rm -rf $(BUILD_DIR)
