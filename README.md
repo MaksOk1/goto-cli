@@ -1,6 +1,8 @@
 ````markdown
 # 🚀 goto-cli
 
+[🇺🇦 Українська](./README.uk.md)
+
 **goto-cli** — a simple CLI utility for quickly navigating between frequently used directories in **Bash** and **Zsh**.
 
 Save a directory under a short name:
