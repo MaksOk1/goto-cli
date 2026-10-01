@@ -3,10 +3,10 @@
 _goto_add() {
     local projects_file="$1"
     local name="$2"
-    local path="${3:-$(pwd)}"
+    local target_path="${3:-$(pwd)}"
 
     if [ -z "$name" ]; then
-        echo "Помилка: Вкажіть назву проєкту (наприклад: goto --add myproject)"
+        echo "Помилка: Вкажіть назву проєкту (наприклад: goto --add my-project)"
         return 1
     fi
 
@@ -16,6 +16,6 @@ _goto_add() {
         mv "$tmp_file" "$projects_file"
     fi
 
-    echo "${name}|${path}" >> "$projects_file"
+    echo "${name}|${target_path}" >> "$projects_file"
     echo "Проєкт '$name' збережено: $path"
 }
