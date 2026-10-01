@@ -11,13 +11,7 @@ _goto_rm() {
 
     local tmp_file="${projects_file}.tmp.$$"
     if [ -f "$projects_file" ]; then
-        local p_name p_dir
-        > "$tmp_file"
-        while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
-            if [ "$p_name" != "$name" ] && [ -n "$p_name" ]; then
-                echo "${p_name}|${p_dir}" >> "$tmp_file"
-            fi
-        done < "$projects_file"
+        grep -v "^${name}|" "$projects_file" > "$tmp_file" 2>/dev/null || true
         mv "$tmp_file" "$projects_file"
     fi
 
