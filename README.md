@@ -4,7 +4,7 @@
 
 [🇺🇦 Українська](./README.uk.md)
 
-**goto-cli** ***— is a simple CLI utility for quickly navigating between frequently used directories, designed for **Bash** and **Zsh** shells.***
+**goto-cli** *— is a simple CLI utility for quickly navigating between frequently used directories, designed for **Bash** and **Zsh** shells.*
 
 Save a directory under a short name:
 
