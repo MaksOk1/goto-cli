@@ -1,14 +1,15 @@
+````markdown
 # 🚀 goto-cli
 
-**goto-cli** — проста CLI-утиліта для швидкої навігації між часто використовуваними директоріями в **Bash** та **Zsh**.
+**goto-cli** — a simple CLI utility for quickly navigating between frequently used directories in **Bash** and **Zsh**.
 
-Збережіть директорію під короткою назвою:
+Save a directory under a short name:
 
 ```bash
 goto -a my-project ~/projects/my-project
-```
+````
 
-і надалі переходьте до неї:
+and then navigate to it:
 
 ```bash
 goto my-project
@@ -16,7 +17,7 @@ goto my-project
 
 ---
 
-## 📥 Встановлення
+## 📥 Installation
 
 ```bash
 git clone <repository-url>
@@ -24,68 +25,68 @@ cd goto-cli
 make install
 ```
 
-Після встановлення оновіть shell:
+After installation, reload your shell:
 
 ```bash
 source ~/.bashrc
 ```
 
-Для Zsh:
+For Zsh:
 
 ```bash
 source ~/.zshrc
 ```
 
-Перевірка:
+Check the installation:
 
 ```bash
 goto --help
 ```
 
-> `goto-cli` встановлюється у `~/.local/share/goto` і не потребує `sudo`.
+> `goto-cli` is installed to `~/.local/share/goto` and does not require `sudo`.
 
 ---
 
-## 🗑️ Видалення
+## 🗑️ Uninstallation
 
-У каталозі проєкту:
+From the project directory:
 
 ```bash
 make uninstall
 ```
 
-або:
+or:
 
 ```bash
 ./uninstall.sh
 ```
 
-Буде видалено `goto-cli` та його конфігурацію з `.bashrc` / `.zshrc`.
+This removes `goto-cli` and its configuration from `.bashrc` / `.zshrc`.
 
-**Збережені маршрути не видаляються.**
+**Saved routes are not deleted.**
 
 ---
 
-# ⚡ Швидкий старт
+# ⚡ Quick Start
 
 ```bash
 cd ~/projects/my-project
 goto -a my-project
 ```
 
-Тепер:
+Now:
 
 ```bash
 goto my-project
 ```
 
-Поверне вас у:
+will take you to:
 
 ```text
 ~/projects/my-project
 ```
 
-Показати всі збережені маршрути:
+Show all saved routes:
 
 ```bash
 goto
@@ -93,20 +94,20 @@ goto
 
 ---
 
-# 🛠️ Основні команди
+# 🛠️ Main Commands
 
-| Команда                  | Опис                     |
-| ------------------------ | ------------------------ |
-| `goto`                   | Показати список проєктів |
-| `goto <name>`            | Перейти до проєкту       |
-| `goto -a <name> [path]`  | Додати проєкт            |
-| `goto -m <name>`         | Змінити проєкт           |
-| `goto -m <name> <value>` | Змінити назву або шлях   |
-| `goto -r <name>`         | Видалити проєкт          |
-| `goto -p <name>`         | Явний перехід до проєкту |
-| `goto -h`                | Показати довідку         |
+| Command                  | Description                      |
+| ------------------------ | -------------------------------- |
+| `goto`                   | Show the list of projects        |
+| `goto <name>`            | Navigate to a project            |
+| `goto -a <name> [path]`  | Add a project                    |
+| `goto -m <name>`         | Modify a project                 |
+| `goto -m <name> <value>` | Change the name or path          |
+| `goto -r <name>`         | Remove a project                 |
+| `goto -p <name>`         | Explicitly navigate to a project |
+| `goto -h`                | Show help                        |
 
-Доступні також довгі варіанти:
+Long options are also available:
 
 ```text
 --add
@@ -121,30 +122,30 @@ goto
 
 ---
 
-# ➕ Додавання
+# ➕ Adding a Route
 
-### Поточна директорія
+### Current Directory
 
 ```bash
 goto -a my-project
 ```
 
-У цьому випадку буде використано поточну директорію.
+The current directory will be used.
 
-### Вказати шлях
+### Specify a Path
 
 ```bash
 goto -a my-project ~/projects/my-project
 ```
 
-### Автоматично взяти назву директорії
+### Automatically Use the Directory Name
 
 ```bash
 cd ~/projects/my-project
 goto -a
 ```
 
-Alias буде:
+The alias will be:
 
 ```text
 my-project
@@ -152,30 +153,30 @@ my-project
 
 ---
 
-# ✏️ Зміна проєкту
+# ✏️ Modifying a Project
 
-### Інтерактивний режим
+### Interactive Mode
 
 ```bash
 goto -m my-project
 ```
 
-Далі можна вибрати:
+You can then choose:
 
 ```text
-1) Змінити назву
-2) Змінити шлях
-3) Змінити назву і шлях
-0) Скасувати
+1) Change name
+2) Change path
+3) Change name and path
+0) Cancel
 ```
 
-### Перейменувати
+### Rename
 
 ```bash
 goto -m my-project new-name
 ```
 
-### Змінити шлях
+### Change Path
 
 ```bash
 goto -m my-project ~/projects/new-location
@@ -183,72 +184,72 @@ goto -m my-project ~/projects/new-location
 
 ---
 
-# 🗑️ Видалення
+# 🗑️ Removing a Route
 
 ```bash
 goto -r my-project
 ```
 
-Видаляється **лише маршрут**, а не сама директорія.
+Only the **saved route** is removed, not the directory itself.
 
-Наприклад:
+For example:
 
 ```text
 my-project → /home/user/projects/my-project
 ```
 
-після:
+after:
 
 ```bash
 goto -r my-project
 ```
 
-каталог `/home/user/projects/my-project` залишиться на диску.
+the directory `/home/user/projects/my-project` will remain on disk.
 
 ---
 
-# 📋 Перегляд маршрутів
+# 📋 Viewing Routes
 
 ```bash
 goto
 ```
 
-або:
+or:
 
 ```bash
 goto -l
 ```
 
-або:
+or:
 
 ```bash
 goto --list
 ```
 
-Приклад:
+Example:
 
 ```text
-Доступні проєкти:
-  frontend             -> /home/user/projects/frontend
-  backend              -> /home/user/projects/backend
-  website              -> /home/user/projects/website
+Available projects:
+frontend             -> /home/user/projects/frontend
+backend              -> /home/user/projects/backend
+website              -> /home/user/projects/website
 ```
 
 ---
 
 # ⌨️ Tab Completion
 
-`goto-cli` підтримує автодоповнення через `Tab` у **Bash** та **Zsh**.
+`goto-cli` supports `Tab` completion in **Bash** and **Zsh**.
 
-Наприклад:
+For example:
 
 ```bash
 goto front<TAB>
 ```
 
-може доповнити назву проєкту.
+may complete the project name.
 
-Також доступне автодоповнення команд:
+Command completion is also available:
 
 ```bash
 goto --<TAB>
@@ -256,15 +257,15 @@ goto --<TAB>
 
 ---
 
-# 🏷️ Назви, що починаються з `-`
+# 🏷️ Names Starting with `-`
 
-Якщо назва проєкту починається з `-`, використовуйте `-p`:
+If a project name starts with `-`, use `-p`:
 
 ```bash
 goto -p "-my-project"
 ```
 
-або:
+or:
 
 ```bash
 goto --project "-my-project"
@@ -272,21 +273,21 @@ goto --project "-my-project"
 
 ---
 
-# 💾 Збереження даних
+# 💾 Data Storage
 
-За замовчуванням маршрути зберігаються у:
+By default, routes are stored in:
 
 ```text
 ~/.project_routes
 ```
 
-Формат:
+Format:
 
 ```text
-назва|шлях
+name|path
 ```
 
-Наприклад:
+For example:
 
 ```text
 frontend|/home/user/projects/frontend
@@ -296,17 +297,17 @@ website|/home/user/projects/website
 
 ---
 
-## ⚙️ Власний файл маршрутів
+## ⚙️ Custom Routes File
 
-Можна використати інший файл:
+You can use a different file:
 
 ```bash
 export GOTO_PROJECTS_FILE="$HOME/.config/goto/routes"
 ```
 
-Після цього маршрути зберігатимуться у вказаному файлі.
+Routes will then be stored in the specified file.
 
-Якщо змінну не задано, використовується:
+If the variable is not set, the default is:
 
 ```text
 ~/.project_routes
@@ -314,45 +315,45 @@ export GOTO_PROJECTS_FILE="$HOME/.config/goto/routes"
 
 ---
 
-# 🩺 Перевірка
+# 🩺 Health Check
 
-Перевірити встановлення:
+Check the installation:
 
 ```bash
 make health-check
 ```
 
-або:
+or:
 
 ```bash
 ./check.sh
 ```
 
-Перевіряються:
+The following are checked:
 
-* файли встановлення;
-* каталоги `src/` та `lib/`;
-* конфігурація Bash/Zsh;
-* завантаження `goto.sh`.
+* installation files;
+* `src/` and `lib/` directories;
+* Bash/Zsh configuration;
+* loading of `goto.sh`.
 
 ---
 
-# 🔄 Оновлення
+# 🔄 Updating
 
-Після отримання нової версії:
+After pulling a new version:
 
 ```bash
 git pull
 make install
 ```
 
-Потім оновіть shell:
+Then reload your shell:
 
 ```bash
 source ~/.bashrc
 ```
 
-або:
+or:
 
 ```bash
 source ~/.zshrc
@@ -360,16 +361,16 @@ source ~/.zshrc
 
 ---
 
-# 📂 Структура
+# 📂 Project Structure
 
 ```text
 goto-cli/
-├── goto.sh          # головний файл
-├── install.sh       # встановлення
-├── uninstall.sh     # видалення
+├── goto.sh          # main file
+├── install.sh       # installation
+├── uninstall.sh     # uninstallation
 ├── check.sh         # health check
 ├── Makefile
-├── src/             # функціональні модулі
+├── src/             # functional modules
 │   ├── add.sh
 │   ├── go.sh
 │   ├── help.sh
@@ -377,7 +378,7 @@ goto-cli/
 │   ├── merge.sh
 │   ├── modify.sh
 │   └── rm.sh
-├── lib/             # спільні бібліотеки
+├── lib/              # shared libraries
 │   ├── input.sh
 │   └── log.sh
 └── FUTURE.md
@@ -385,9 +386,9 @@ goto-cli/
 
 ---
 
-# 🔧 Для розробки
+# 🔧 Development
 
-Основні команди:
+Main commands:
 
 ```bash
 make install
@@ -398,13 +399,13 @@ make rehash
 make help
 ```
 
-Для локального запуску без встановлення:
+To run locally without installing:
 
 ```bash
 source ./goto.sh
 ```
 
-Після цього:
+Then:
 
 ```bash
 goto --help
@@ -412,22 +413,22 @@ goto --help
 
 ---
 
-# 💡 Як це працює
+# 💡 How It Works
 
-`goto` — це **shell-функція**, а не звичайний executable.
+`goto` is a **shell function**, not a regular executable.
 
-Це дозволяє виконувати:
+This allows:
 
 ```bash
 goto my-project
 ```
 
-і змінювати директорію саме **поточного shell-сеансу**.
+to change the directory of the **current shell session**.
 
-Під час встановлення `goto.sh` автоматично підключається через `.bashrc` або `.zshrc`.
+During installation, `goto.sh` is automatically sourced through `.bashrc` or `.zshrc`.
 
 ---
 
 # 📜 License
 
-Дивіться [`LICENSE`](./LICENSE).
+See [`LICENSE`](./LICENSE).
