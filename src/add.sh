@@ -10,29 +10,33 @@ _goto_add() {
         return 1
     fi
 
+    # Гарантуємо існування директорії
+    mkdir -p "$(dirname "$projects_file")" 2>/dev/null || true
+
+    # Безпечне створення тимчасового файлу
     local tmp_file
     if command -v mktemp >/dev/null 2>&1; then
-        tmp_file=$(mktemp "${projects_file}.tmp.XXXXXX")
-    else
-        tmp_file="${projects_file}.tmp.$$."$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 8)
+        tmp_file=$(mktemp "${projects_file}.tmp.XXXXXX" 2>/dev/null)
+    fi
+    if [[ -z "$tmp_file" ]]; then
+        tmp_file="${projects_file}.tmp.$$.$RANDOM"
     fi
 
-    trap 'rm -f "$tmp_file"' RETURN EXIT
-
+    # Фільтрація та додавання нового запису
     if [ -f "$projects_file" ]; then
-        grep -vF "^${name}|" "$projects_file" > "$tmp_file" 2>/dev/null || true
+        grep -v "^${name}|" "$projects_file" > "$tmp_file" 2>/dev/null || true
         # mv "$tmp_file" "$projects_file"
     else
-        # Якщо файлу немає, створюємо пусту директорію для нього (за потреби) та сам файл
-        mkdir -p "$(dirname "$projects_file")" 2>/dev/null || true
-        true > "$tmp_file"
+        : > "$tmp_file"
     fi
 
     echo "${name}|${target_path}" >> "$tmp_file"
 
+    # Атомарна заміна файлу
     if mv "$tmp_file" "$projects_file"; then
         log_success "Проєкт '$name' збережено: $target_path"
     else
+        rm -f "$tmp_file"
         log_error "Не вдалося зберегти зміни у $projects_file"
         return 1
     fi
