@@ -1,8 +1,15 @@
 # Future Concepts & Ideas (плани на майбутнє)
 
-## 📝 Info (огляд файлу)
-
 Усі ідеї, потенційні покращення та архітектурні зміни, які виглядають перспективно, документуються в цьому файлі.
+
+## Simple point of view (fast review)
+<!-- Тут: коротко про всі зміни, що плануються -->
+* lib папка з функціями для простого логування й меншої кількості написання [OK]/[FAIL]
+* config/ для вибору назв блоків, й інші додаткові налаштування
+* prevent install over install
+* make lib/makefile dir for more makefile checks outside of main file
+* make i18n for project
+* make color-coding for project
 
 ## 🚀 High Priority (найближчі плани)
 <!-- Тут: те, що варто зробити в першу чергу та що критично для проєкту вже ось зараз -->
@@ -16,6 +23,7 @@
 
 ## 💡 Backlog (беклог)
 <!-- Тут: масштабні завдання, або круті ідеї (найближчим часом) -->
+* `none`
 
 ## 💡 Backburner (перспективні ідеї)
 <!-- Тут: масштабні завдання, або круті ідеї (без точних термінів) -->
@@ -24,12 +32,3 @@
 ## 🎨 UI/UX Ideas (Можливі зміни інтерфейсу)
 <!-- Тут все, що стосується покращення вигляду консолі, кольорів, виводу чи інтерфейсу -->
 * **Колоркодинг:** make color-coding for project (зробити термінал кольоровим).
-
-## Simple point of view (fast review)
-<!-- Тут: коротко про всі зміни, що плануються -->
-* lib папка з функціями для простого логування й меншої кількості написання [OK]/[FAIL]
-* config/ для вибору назв блоків, й інші додаткові налаштування
-* prevent install over install
-* make lib/makefile dir for more makefile checks outside of main file
-* make i18n for project
-* make color-coding for project
