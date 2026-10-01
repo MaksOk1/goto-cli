@@ -56,3 +56,31 @@ help:
 	@echo "  make health-check	- Запустити check.sh для діагностики"
 	@echo "  make uninstall		- Видалити goto-cli"
 	@echo "  make permissions	- Надати +x права всім .sh скриптам"
+
+BINARY=goto
+BUILD_DIR=dist
+
+clean:
+	@echo "[+] Очищення тимчасових файлів..."
+	rm -rf dist
+	rm -f *.x.c src/*.x.c lib/*.x.c
+
+build:
+	@echo "[+] Створення структури для збірки..."
+	mkdir -p dist/src dist/lib
+	
+	@echo "[+] Компіляція головного файлу..."
+	# -r дозволяє запускати бінарник на інших схожих машинах Linux
+	# -f вказує файл для компіляції
+	shc -r -f goto.sh -o dist/$(BINARY)
+	
+	@echo "[+] Компіляція залежностей..."
+	# Компілюємо файли з src
+	for file in src/*.sh; do \
+		shc -r -f $$file -o dist/src/$$(basename $$file .sh); \
+	done
+	
+	# Компілюємо файли з lib
+	for file in lib/*.sh; do \
+		shc -r -f $$file -o dist/lib/$$(basename $$file .sh); \
+	done
