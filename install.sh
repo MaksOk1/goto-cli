@@ -5,11 +5,15 @@ SCRIPT_NAME="goto.sh"
 
 echo "Установка goto-cli..."
 
-# 1. Створюємо директорію та копіюємо файл
+# 1. Створюємо директорію, копіюємо головний файл та папку src/
 mkdir -p "$INSTALL_DIR"
 cp "$SCRIPT_NAME" "$INSTALL_DIR/$SCRIPT_NAME"
 
-# 2. Блок, який додаватиметься у конфіги shell
+if [ -d "src" ]; then
+    cp -r "src" "$INSTALL_DIR/"
+fi
+
+# 2. Блок конфігурації у shell rc
 BLOCK_MARKER="# >>> goto-cli initialize >>>"
 BLOCK_END="# <<< goto-cli initialize <<<"
 
@@ -39,7 +43,3 @@ inject_rc "$HOME/.zshrc"
 
 echo ""
 echo "Установку завершено!"
-echo "Перезапустіть термінал або виконайте: source ~/.bashrc (або ~/.zshrc)"
-echo ""
-echo "Для початку використання виконайте: goto"
-echo ""
