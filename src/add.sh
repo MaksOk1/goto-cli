@@ -10,10 +10,9 @@ _goto_add() {
         return 1
     fi
 
-    local tmp_file
-    tmp_file=$(mktemp)
+    local tmp_file="${projects_file}.tmp.$$"
     awk -F'|' -v n="$name" '$1 != n' "$projects_file" > "$tmp_file" && mv "$tmp_file" "$projects_file"
 
     echo "${name}|${path}" >> "$projects_file"
-    echo "Проєкт '$name' збережено для: $path"
+    echo "Проєкт '$name' збережено: $path"
 }

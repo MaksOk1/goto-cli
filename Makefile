@@ -11,7 +11,7 @@ permissions:
 
 # Встановлення з автоматичним викликом rehash
 install: permissions
-	@if [ -f ./install.sh]; then \
+	@if [ -f ./install.sh ]; then \
 		chmod +x ./install.sh; \
 		./install.sh; \
 	else \
