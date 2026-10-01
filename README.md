@@ -1,8 +1,10 @@
-# 🚀 goto-cli
+# goto-cli
+
+> Simple, dependency-free Bash/Zsh CLI for named directory bookmarks and fast navigation.
 
 [🇺🇦 Українська](./README.uk.md)
 
-**goto-cli** — a simple CLI utility for quickly navigating between frequently used directories in **Bash** and **Zsh**.
+**goto-cli** ***— is a simple CLI utility for quickly navigating between frequently used directories, designed for **Bash** and **Zsh** shells.***
 
 Save a directory under a short name:
 
