@@ -3,8 +3,8 @@
 # Внутрішня функція атомарного оновлення запису у файлі
 _goto_update_entry() {
     local projects_file="$1"
-    local target_name="$2"
-    local new_name="$3"
+    local target_name="$(_goto_clean_name "$2")"
+    local new_name="$(_goto_clean_name "$3")"
     local new_path="$4"
 
     local tmp_file
@@ -33,8 +33,8 @@ _goto_update_entry() {
 # Пряме перейменування назви проєкту
 _goto_rename() {
     local projects_file="$1"
-    local old_name="$2"
-    local new_name="$3"
+    local old_name="$(_goto_clean_name "$2")"
+    local new_name="$(_goto_clean_name "$3")"
 
     if [[ -z "$projects_file" || -z "$old_name" || -z "$new_name" ]]; then
         log_error "Недостатньо аргументів для перейменування!"
@@ -63,11 +63,12 @@ _goto_rename() {
 # Головна команда goto --modify <name> [new_name/new_path]
 _goto_modify() {
     local projects_file="$1"
-    local target_name="$2"
-    local param2="$3" # Може бути новою назвою або новим шляхом
+    local target_name="$(_goto_clean_name "$2")"
+    local param2="$3"
 
     if [ -z "$target_name" ]; then
         prompt_input "Введіть назву проєкту для модифікації" target_name ""
+        target_name="$(_goto_clean_name "$target_name")"
     fi
 
     if [ -z "$target_name" ]; then
@@ -85,7 +86,6 @@ _goto_modify() {
 
     local current_path="${existing_entry#*|}"
 
-    # Якщо другий параметр передано через CLI (наприклад: goto -m test new_test АБО goto -m test /new/path)
     if [ -n "$param2" ]; then
         if [ -d "$param2" ] || [[ "$param2" == /* ]]; then
             _goto_update_entry "$projects_file" "$target_name" "" "$param2"
@@ -97,7 +97,6 @@ _goto_modify() {
         fi
     fi
 
-    # Інтерактивний режим модифікації
     echo "Модифікація проєкту '$target_name' (Поточний шлях: $current_path)"
     echo "1) Змінити назву проєкту"
     echo "2) Змінити шлях до проєкту"
@@ -112,6 +111,7 @@ _goto_modify() {
             local new_name=""
             while [ -z "$new_name" ]; do
                 prompt_input "Введіть нову назву" new_name ""
+                new_name="$(_goto_clean_name "$new_name")"
                 if grep -q "^${new_name}|" "$projects_file" 2>/dev/null; then
                     log_error "Назва '$new_name' вже зайнята!"
                     new_name=""
@@ -130,6 +130,7 @@ _goto_modify() {
             local new_name="" new_path=""
             while [ -z "$new_name" ]; do
                 prompt_input "Введіть нову назву" new_name ""
+                new_name="$(_goto_clean_name "$new_name")"
                 if grep -q "^${new_name}|" "$projects_file" 2>/dev/null; then
                     log_error "Назва '$new_name' вже зайнята!"
                     new_name=""

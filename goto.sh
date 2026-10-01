@@ -37,10 +37,15 @@ fi
 goto() {
     local projects_file="${GOTO_PROJECTS_FILE:-$HOME/.project_routes}"
     # Створюємо файл, якщо його немає
-    touch "$projects_file"
+    touch "$projects_file" 2>/dev/null || true
 
-    case "$1" in
-        ""|-l|--list)
+    local arg="$1"
+
+    case "$arg" in
+        "")
+            _goto_list "$projects_file"
+            ;;
+        -l|--list)
             _goto_list "$projects_file"
             ;;
         -h|--help)
@@ -55,8 +60,28 @@ goto() {
         -r|--rm|--remove)
             _goto_rm "$projects_file" "$2"
             ;;
+        -p|--project)
+            if [ -z "$2" ]; then
+                log_error "Не вказано назву проєкту для прапорця -p."
+                return 1
+            fi
+            _goto_go "$projects_file" "$2"
+            ;;
+        -*)
+            # Ввід починається на '-' або '--' і не є стандартним прапорцем
+            local clean_arg="$(_goto_clean_name "$arg")"
+            if _goto_exists "$projects_file" "$clean_arg"; then
+                _goto_go "$projects_file" "$clean_arg"
+            else
+                log_error "Невідомий прапорець або опція '$arg'."
+                log_warn "Якщо проєкт названо з '-' на початку, використовуйте: goto -p \"$arg\" або goto \"$arg\""
+                log_info "maybe you mean: goto '$arg'"
+                echo "Запустіть 'goto --help' для перегляду довідки."
+                return 1
+            fi
+            ;;
         *)
-            _goto_go "$projects_file" "$1"
+            _goto_go "$projects_file" "$arg"
             ;;
     esac
 }
@@ -64,15 +89,19 @@ goto() {
 # Автодоповнення назв проєктів (Bash/Zsh)
 _goto_complete() {
     local projects_file="${GOTO_PROJECTS_FILE:-$HOME/.project_routes}"
-    [ -f "$projects_file" ] || return 0
-
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local list=""
     local p_name p_dir
 
-    while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
-        [ -n "$p_name" ] && list="$list $p_name"
-    done < "$projects_file"
+    if [ -f "$projects_file" ]; then
+        while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
+            [ -n "$p_name" ] && list="$list $p_name"
+        done < "$projects_file"
+    fi
+
+    if [[ "$cur" == -* ]]; then
+        list="$list -l --list -h --help -a --add -m --modify --change -r --rm --remove -p --project"
+    fi
 
     if [ -n "$ZSH_VERSION" ]; then
         reply=(${=list})

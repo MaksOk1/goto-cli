@@ -2,7 +2,7 @@
 
 _goto_rm() {
     local projects_file="$1"
-    local name="$2"
+    local name="$(_goto_clean_name "$2")"
 
     if [ -z "$name" ]; then
         log_error "Помилка: Вкажіть назву проєкту для видалення."

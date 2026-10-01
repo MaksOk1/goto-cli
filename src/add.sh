@@ -2,7 +2,8 @@
 
 _goto_add() {
     local projects_file="$1"
-    local name="${2:-$(basename "$(pwd)")}"
+    local raw_name="${2:-$(basename "$(pwd)")}"
+    local name="$(_goto_clean_name "$raw_name")"
     local target_path="${3:-$(pwd)}"
 
     if [[ -z "$projects_file" ]]; then
@@ -46,6 +47,7 @@ _goto_add() {
             local new_name=""
             while [ -z "$new_name" ]; do
                 prompt_input "Введіть нову назву для '$target_path'" new_name ""
+                new_name="$(_goto_clean_name "$new_name")"
                 if grep -q "^${new_name}|" "$projects_file" 2>/dev/null; then
                     log_error "Назва '$new_name' також зайнята!"
                     new_name=""
@@ -56,6 +58,7 @@ _goto_add() {
             local old_new_name=""
             while [ -z "$old_new_name" ]; do
                 prompt_input "Введіть нову назву для старого проєкту" old_new_name ""
+                old_new_name="$(_goto_clean_name "$old_new_name")"
                 if grep -q "^${old_new_name}|" "$projects_file" 2>/dev/null; then
                     log_error "Назва '$old_new_name' вже зайнята!"
                     old_new_name=""
