@@ -1,4 +1,3 @@
-````markdown
 # 🚀 goto-cli
 
 [🇺🇦 Українська](./README.uk.md)
