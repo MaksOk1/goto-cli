@@ -57,30 +57,49 @@ help:
 	@echo "  make uninstall		- Видалити goto-cli"
 	@echo "  make permissions	- Надати +x права всім .sh скриптам"
 
+
 BINARY=goto
 BUILD_DIR=dist
 
-clean:
-	@echo "[+] Очищення тимчасових файлів..."
-	rm -rf dist
-	rm -f *.x.c src/*.x.c lib/*.x.c
-
 build:
-	@echo "[+] Створення структури для збірки..."
-	mkdir -p dist/src dist/lib
+	@echo "[+] Створення папки для збірки..."
+	mkdir -p $(BUILD_DIR)
+
+	@echo "[+] Об'єднання всіх скриптів в один файл..."
+	cp goto.sh $(BUILD_DIR)/monolith.sh
 	
-	@echo "[+] Компіляція головного файлу..."
-	# -r дозволяє запускати бінарник на інших схожих машинах Linux
-	# -f вказує файл для компіляції
-	shc -r -f goto.sh -o dist/$(BINARY)
+	# Зміна shebang з env на чистий /bin/bash для сумісності з shc
+	sed -i '1s|#!/usr/bin/env bash|#!/bin/bash|' $(BUILD_DIR)/monolith.sh
 	
-	@echo "[+] Компіляція залежностей..."
-	# Компілюємо файли з src
-	for file in src/*.sh; do \
-		shc -r -f $$file -o dist/src/$$(basename $$file .sh); \
-	done
+	# Тобі вже знайомі заміни source:
+	sed -i '/source.*lib\/log.sh/r lib/log.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*lib\/log.sh/d' $(BUILD_DIR)/monolith.sh
 	
-	# Компілюємо файли з lib
-	for file in lib/*.sh; do \
-		shc -r -f $$file -o dist/lib/$$(basename $$file .sh); \
-	done
+	sed -i '/source.*src\/add.sh/r src/add.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*src\/add.sh/d' $(BUILD_DIR)/monolith.sh
+	
+	sed -i '/source.*src\/go.sh/r src/go.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*src\/go.sh/d' $(BUILD_DIR)/monolith.sh
+	
+	sed -i '/source.*src\/help.sh/r src/help.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*src\/help.sh/d' $(BUILD_DIR)/monolith.sh
+	
+	sed -i '/source.*src\/list.sh/r src/list.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*src\/list.sh/d' $(BUILD_DIR)/monolith.sh
+	
+	sed -i '/source.*src\/merge.sh/r src/merge.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*src\/merge.sh/d' $(BUILD_DIR)/monolith.sh
+	
+	sed -i '/source.*src\/rm.sh/r src/rm.sh' $(BUILD_DIR)/monolith.sh
+	sed -i '/source.*src\/rm.sh/d' $(BUILD_DIR)/monolith.sh
+
+	@echo "[+] Обфускація та компіляція в бінарник..."
+	shc -r -f $(BUILD_DIR)/monolith.sh -o $(BUILD_DIR)/$(BINARY)
+
+	@echo "[+] Очищення тимчасового коду..."
+	rm -f $(BUILD_DIR)/monolith.sh $(BUILD_DIR)/monolith.sh.x.c
+	@echo "[OK] Готово! Бінарник тут: $(BUILD_DIR)/$(BINARY)"
+
+
+clean:
+	rm -rf $(BUILD_DIR)
