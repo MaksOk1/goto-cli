@@ -49,6 +49,9 @@ goto() {
         -a|--add)
             _goto_add "$projects_file" "$2" "$3"
             ;;
+        -m|--modify|--change)
+            _goto_modify "$projects_file" "$2" "$3"
+            ;;
         -r|--rm|--remove)
             _goto_rm "$projects_file" "$2"
             ;;
@@ -64,7 +67,7 @@ _goto_complete() {
     [ -f "$projects_file" ] || return 0
 
     local cur="${COMP_WORDS[COMP_CWORD]}"
-    local list
+    local list=""
     local p_name p_dir
 
     while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
