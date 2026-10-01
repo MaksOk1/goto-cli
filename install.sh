@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[ -f "$SCRIPT_DIR/lib/log.sh" ] && . "$SCRIPT_DIR/lib/log.sh"
+
 INSTALL_DIR="$HOME/.local/share/goto"
 SCRIPT_NAME="goto.sh"
 
-echo "Установка goto-cli..."
+log_info "Установка goto-cli..."
 
 # 1. Створюємо директорію, копіюємо головний файл та папку src/
 mkdir -p "$INSTALL_DIR"
@@ -54,12 +57,11 @@ inject_rc() {
 
         echo "$SOURCE_CMD" >> "$tmp_rc"
         mv "$tmp_rc" "$rc_file"
-        echo "Додано конфігурацію в $rc_file"
+        log_success "Додано конфігурацію в $rc_file"
     fi
 }
 
 inject_rc "$HOME/.bashrc"
 inject_rc "$HOME/.zshrc"
 
-echo ""
-echo "Установку завершено!"
+log_success "Установку завершено!"

@@ -4,11 +4,11 @@ _goto_list() {
     local projects_file="$1"
 
     if [ ! -s "$projects_file" ]; then
-        log_time "Список проєктів порожній."
+        echo "Список проєктів порожній."
         return 0
     fi
 
-    log_time "Доступні проєкти:"
+    echo "Доступні проєкти:"
     local p_name p_dir
     while IFS='|' read -r p_name p_dir || [ -n "$p_name" ]; do
         [ -z "$p_name" ] && continue

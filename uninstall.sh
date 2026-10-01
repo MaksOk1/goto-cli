@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
 INSTALL_DIR="$HOME/.local/share/goto"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ -f "$SCRIPT_DIR/lib/log.sh" ]; then
+    . "$SCRIPT_DIR/lib/log.sh"
+elif [ -f "$INSTALL_DIR/lib/log.sh" ]; then
+    . "$INSTALL_DIR/lib/log.sh"
+fi
+
 BLOCK_MARKER="# >>> goto-cli initialize >>>"
 BLOCK_END="# <<< goto-cli initialize <<<"
 
@@ -26,7 +34,7 @@ remove_rc() {
         done < "$rc_file"
 
         mv "$tmp_rc" "$rc_file"
-        echo "Очищено $rc_file"
+        declare -f log_success >/dev/null && log_success "Очищено $rc_file" || echo "Очищено $rc_file"
     fi
 }
 
@@ -35,8 +43,7 @@ remove_rc "$HOME/.zshrc"
 
 if [ -d "$INSTALL_DIR" ]; then
     rm -rf "$INSTALL_DIR"
-    echo "Видалено $INSTALL_DIR"
+    declare -f log_success >/dev/null && log_success "Видалено $INSTALL_DIR" || echo "Видалено $INSTALL_DIR"
 fi
 
-echo ""
-echo "goto-cli успішно видалено."
+declare -f log_success >/dev/null && log_success "goto-cli успішно видалено." || echo "goto-cli успішно видалено."

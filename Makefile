@@ -1,12 +1,14 @@
+SHELL := /usr/bin/env bash
+
 .PHONY: all install uninstall permissions check health-check rehash help
 
-SHELL := /usr/bin/env bash
+LOG := source ./lib/log.sh 2>/dev/null &&
 
 all: help
 
 # Надання прав на виконання
 permissions:
-	@echo "Надання прав на виконання..."
+	@$(LOG) log_info "Надання прав на виконання..." || echo "Надання прав на виконання..."
 	@chmod +x *.sh src/*.sh lib/*.sh 2>/dev/null || chmod +x *.sh
 
 # Встановлення з автоматичним викликом rehash
@@ -15,10 +17,9 @@ install: permissions
 		chmod +x ./install.sh; \
 		./install.sh; \
 	else \
-		echo "Помилка: Скрипт install.sh не знайдено."; \
+		$(LOG) log_error "Скрипт install.sh не знайдено." || echo "Помилка: Скрипт install.sh не знайдено."; \
 		exit 1; \
 	fi	
-# 	@echo ""
 	@$(MAKE) --no-print-directory rehash
 
 # Видалення
@@ -27,13 +28,13 @@ uninstall:
 		chmod +x ./uninstall.sh; \
 		./uninstall.sh; \
 	else \
-		echo "Помилка: Скрипт uninstall.sh не знайдено."; \
+		$(LOG) log_error "Скрипт uninstall.sh не знайдено." || echo "Помилка: Скрипт uninstall.sh не знайдено."; \
 		exit 1; \
 	fi
 
 # Скидання хешу та інструкція щодо оновлення термінала
 rehash:
-	@echo "Оновлення хешу shell..."
+	@$(LOG) log_info "Оновлення хешу shell..." || echo "Оновлення хешу shell..."
 	@hash -r 2>/dev/null || true
 	@if [ -n "$$ZSH_VERSION" ]; then rehash 2>/dev/null || true; fi
 	@echo "--------------------------------------------------------"
